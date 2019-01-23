@@ -1,8 +1,18 @@
 var express = require('express');
 var router = express.Router();
 var multer  = require('multer')
-var upload = multer({ dest: 'videos' })
 var _ = require('lodash');
+
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'videos');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  }
+})
+
+var upload = multer({ storage });
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -10,9 +20,10 @@ router.get('/', function(req, res) {
 });
 
 router.post('/process', upload.single('video'), function(req, res) {
-  console.log(req.file);
-  // TODO: Process the video
   var path = _.get(req, 'file.path');
+  console.log(path);
+
+  // TODO: Process the video
 
   var output = 'test';
   res.render('output', { output });
