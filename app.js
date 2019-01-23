@@ -4,6 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var hbs = require('express-handlebars');
+var ffmpeg = require('ffmpeg');
+var uuidv1 = require('uuid/v1');
 var bodyParser = require('body-parser');
 
 var indexRouter = require('./routes/index');
@@ -25,3 +27,35 @@ app.use(bodyParser.json())
 app.use('/', indexRouter);
 
 module.exports = app;
+
+/*
+var processVideo = function(videoPath) {
+  var videoUuid = uuidv1();
+  try {
+    new ffmpeg(videoPath, function (error, video) {
+		if (error) {
+			console.log('Error while processing: ' + error);
+      return;
+		}
+    // '/' + videoUuid + '/frames'
+    video.fnExtractFrameToJPG('frames', {
+			frame_rate : 1,
+			file_name : 'frame_%t_%s'
+		},
+    function (error, frames) {
+      if (!error)
+				console.log('Frames: ' + frames);
+        else {
+          console.log(error);
+        }
+		});
+
+	});
+  }
+  catch (e) {
+
+  }
+};
+
+processVideo("excursion_video.mp4");
+*/
