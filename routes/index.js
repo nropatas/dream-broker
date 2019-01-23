@@ -7,6 +7,7 @@ router.get('/', function(req, res) {
 });
 
 router.post('/process', function(req, res) {
+  console.log(JSON.stringify(req.body));
   // TODO: Process the video
 
   var output = 'test';
