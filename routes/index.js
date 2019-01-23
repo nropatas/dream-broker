@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var multer  = require('multer')
+var multer  = require('multer');
+var ffmpeg = require('ffmpeg');
+var uuidv1 = require('uuid/v1');
+var fs = require('fs');
 var _ = require('lodash');
 
 var storage = multer.diskStorage({
@@ -14,7 +17,7 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage });
 
-function processVideo(videoPath) {
+var processVideo = function(videoPath) {
   var videoUuid = uuidv1();
   try {
     new ffmpeg(videoPath, function (error, video) {
@@ -22,8 +25,12 @@ function processVideo(videoPath) {
 			console.log('Error while processing: ' + error);
       return;
 		}
-    // '/' + videoUuid + '/frames'
-    video.fnExtractFrameToJPG('frames', {
+
+    var framesDir = videoUuid + '-frames';
+    if (!fs.existsSync(framesDir)) {
+      fs.mkdirSync(framesDir);
+    }
+    video.fnExtractFrameToJPG(framesDir, {
 			frame_rate : 1,
 			file_name : 'frame_%t_%s'
 		},
@@ -51,7 +58,6 @@ router.post('/process', upload.single('video'), function(req, res) {
   var path = _.get(req, 'file.path');
   console.log(path);
 
-  // TODO: Process the video
   processVideo(path);
 
   var output = 'test';
